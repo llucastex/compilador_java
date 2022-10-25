@@ -28,7 +28,7 @@ public class Scanner {
         keywords.put("method", TokenSubTypes.METHOD);
         keywords.put("function", TokenSubTypes.FUNCTION);
         keywords.put("constructor", TokenSubTypes.CONSTRUCTOR);
-        keywords.put("bolean", TokenSubTypes.BOOLEAN);
+        keywords.put("boolean", TokenSubTypes.BOOLEAN);
         keywords.put("char", TokenSubTypes.CHAR);
         keywords.put("void", TokenSubTypes.VOID);
         keywords.put("static", TokenSubTypes.STATIC);
@@ -106,13 +106,13 @@ public class Scanner {
               advance();
               switch (ch){
                 case '<':
-                  return new Token (TokenSubTypes.PLUS, "&lt");
+                  return new Token (TokenSubTypes.PLUS, "&lt;");
                 case '>':
-                  return new Token (TokenSubTypes.PLUS, "&gt");
+                  return new Token (TokenSubTypes.PLUS, "&gt;");
                 case '"':
-                  return new Token (TokenSubTypes.PLUS, "&quot");
+                  return new Token (TokenSubTypes.PLUS, "&quot;");
                 case '&':
-                  return new Token (TokenSubTypes.PLUS, "&amp");
+                  return new Token (TokenSubTypes.PLUS, "&amp;");
               }
               return new Token (TokenSubTypes.PLUS, String.valueOf(ch));
       }

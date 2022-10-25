@@ -19,6 +19,7 @@ public class Token {
             this.tokenType = TokenType.SYMBOL;
             break;
           case IDENT:
+          case BOOLEAN:
           case LET:
           case INT:
           case VAR:
@@ -28,7 +29,6 @@ public class Token {
           case METHOD:
           case FUNCTION:
           case CONSTRUCTOR:
-          case BOOLEAN:
           case CHAR:
           case VOID:
           case STATIC:
@@ -71,6 +71,9 @@ public class Token {
     }
 
     public String toString() {
+        if (this.tokenType == TokenType.INT_CONST){
+        return "<integerConstant> " + lexeme + " </integerConstant>";
+        }
         return "<"+ this.tokenType.toString().toLowerCase() +"> " + lexeme + " </"+ this.tokenType.toString().toLowerCase() + ">";
     }  
 
