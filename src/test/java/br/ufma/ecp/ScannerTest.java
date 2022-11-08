@@ -17,10 +17,10 @@ public class ScannerTest extends TestSupport {
 
     @Test
     public void testSimple () {
-        String input = "45  + if + \"ola mundo\" - 876";
+        String input = "let string = 20;";
         Scanner scan = new Scanner (input.getBytes());
         for (Token tk = scan.nextToken(); tk.getType() != TokenSubTypes.EOF; tk = scan.nextToken()) {
-            System.out.println(tk);
+            System.out.println(tk.getType());
         }
     }
     

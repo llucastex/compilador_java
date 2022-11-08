@@ -1,9 +1,40 @@
 package br.ufma.ecp.token;
 
 public enum TokenSubTypes {
+
         // Symbols
-        PLUS,MINUS, EQ, SEMICOLON,
-        NUMBER,
+        // delimitator
+        LPAREN,
+        RPAREN,
+        LBRACE,
+        RBRACE,
+        LBRACKET,
+        RBRACKET,
+        
+        COMMA,
+        SEMICOLON,
+        DOT,
+
+        PLUS,
+        MINUS,
+        ASTERISK,
+        SLASH,
+
+        AND,
+        OR,
+        NOT,
+
+        LT,
+        GT,
+        EQ,
+
+
+
+        EOF, 
+
+        ILLEGAL,
+
+
         // Keywords
         IDENT,
         LET,
@@ -29,8 +60,9 @@ public enum TokenSubTypes {
         FALSE,
         NULL,
         THIS,
-        EOF,
         // else
+        NUMBER,
+        STRING,
         STRING_CONST,
         IDENTIFIER,
 }

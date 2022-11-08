@@ -16,6 +16,22 @@ public class Token {
           case MINUS:
           case EQ:
           case SEMICOLON:
+          case LPAREN:
+          case RPAREN:
+          case LBRACE:
+          case RBRACE:
+          case LBRACKET:
+          case RBRACKET:
+          case COMMA:
+          case DOT:
+          case ASTERISK:
+          case SLASH:
+          case AND:
+          case OR:
+          case NOT:
+          case LT:
+          case GT:
+          case EOF: 
             this.tokenType = TokenType.SYMBOL;
             break;
           case IDENT:
@@ -53,9 +69,6 @@ public class Token {
           default:
             this.tokenType = TokenType.IDENTIFIER;
         }
-        // if (this.type == TokenSubTypes.PLUS){
-        //     this.tokenType = TokenType.SYMBOL;
-        // }
     }
 
     public TokenSubTypes getType(){
@@ -66,19 +79,14 @@ public class Token {
         return this.lexeme;
     }
 
-    public String TokentoString() {
-        return "<"+ type +">" + lexeme + "</"+ type + ">";
-    }
 
     public String toString() {
         if (this.tokenType == TokenType.INT_CONST){
         return "<integerConstant> " + lexeme + " </integerConstant>";
+        } else if(this.tokenType == TokenType.SYMBOL){
+        return "<symbol> " + lexeme + " </symbol>";
         }
         return "<"+ this.tokenType.toString().toLowerCase() +"> " + lexeme + " </"+ this.tokenType.toString().toLowerCase() + ">";
     }  
-
-    // public String toString() {
-    //     return "<"+ this.tokenType +">" + lexeme + "</"+ this.tokenType + ">";
-    // }
 
 }

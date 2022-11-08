@@ -65,10 +65,6 @@ public class Scanner {
               current++;
           }
       }
-    private boolean isSymbol (char c) {
-          String symbols = "{}()[].,;+-*/&|<>=~";
-          return symbols.indexOf(c) > -1;
-      }
     
     private boolean isAlpha(char c) {
           return (c >= 'a' && c <= 'z') ||
@@ -101,21 +97,6 @@ public class Scanner {
           return new Token (TokenSubTypes.NUMBER, Character.toString(ch));
       }  else if (Character.isDigit(ch))
           return number();
-             
-      if (isSymbol(ch)){
-              advance();
-              switch (ch){
-                case '<':
-                  return new Token (TokenSubTypes.PLUS, "&lt;");
-                case '>':
-                  return new Token (TokenSubTypes.PLUS, "&gt;");
-                case '"':
-                  return new Token (TokenSubTypes.PLUS, "&quot;");
-                case '&':
-                  return new Token (TokenSubTypes.PLUS, "&amp;");
-              }
-              return new Token (TokenSubTypes.PLUS, String.valueOf(ch));
-      }
   
       switch (ch) {
           case '+':
@@ -124,7 +105,10 @@ public class Scanner {
           case '-':
               advance();
               return new Token (TokenSubTypes.MINUS,"-");
-          case '\0':
+          case '/':
+              advance();
+              return new Token (TokenSubTypes.SLASH,"&quot;");
+          case '0':
               return new Token (TokenSubTypes.EOF,"EOF");
           case '=':
             advance();
@@ -132,8 +116,58 @@ public class Scanner {
           case ';':    
             advance();
             return new Token (TokenSubTypes.SEMICOLON,";");
+          case '*':
+              advance();
+              return new Token (TokenSubTypes.ASTERISK,"*"); 
+          case '.':
+              advance();
+              return new Token (TokenSubTypes.DOT,"."); 
+          case '&':
+              advance();
+              return new Token (TokenSubTypes.AND,"&amp;"); 
+          case '|':
+              advance();
+              return new Token (TokenSubTypes.OR,"|"); 
+          case '~':
+              advance();
+              return new Token (TokenSubTypes.NOT,"~"); 
+
+
+          case '>':
+              advance();
+              return new Token (TokenSubTypes.GT,"&gt;"); 
+          case '<':
+              advance();
+              return new Token (TokenSubTypes.LT,"&lt;"); 
+
+          case '(':
+              advance();
+              return new Token (TokenSubTypes.LPAREN,"("); 
+          case ')':
+              advance();
+              return new Token (TokenSubTypes.RPAREN,")"); 
+          case '{':
+              advance();
+              return new Token (TokenSubTypes.LBRACE,"{"); 
+          case '}':
+              advance();
+              return new Token (TokenSubTypes.RBRACE,"}"); 
+          case '[':
+              advance();
+              return new Token (TokenSubTypes.LBRACKET,"["); 
+          case ']':
+              advance();
+              return new Token (TokenSubTypes.RBRACKET,"]"); 
+          case ',':
+              advance();
+              return new Token (TokenSubTypes.COMMA,","); 
+
+          case 0:
+              return new Token(TokenSubTypes.EOF, "EOF");  
           default:
-            throw new Error("lexical error at " + ch);
+            // throw new Error("lexical error at " + ch);
+            advance(); 
+            return new Token(TokenSubTypes.ILLEGAL, Character.toString(ch));
       }
       }
   
