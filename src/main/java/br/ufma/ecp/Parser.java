@@ -61,6 +61,7 @@ public class Parser{
     }
     
     // Compiles a VAR declaration.
+    // 'var' type varName ( ',' varName)* ';'
     void parseVardec () {
         printNonTerminal("varDec");
         expectPeek(VAR);
@@ -113,6 +114,7 @@ public class Parser{
     }
 
     // Compiles a (possibly empty) parameter list, not including the enclosing "()" .
+    // ((type varName) ( ',' type varName)*)?
     void parseParameterList(){
         printNonTerminal("parameterList");
         if (!checkToken(RPAREN)){
@@ -128,7 +130,6 @@ public class Parser{
     }
 
     
-   
     // 'while' '(' expression ')' '{' statements '}'
     void parseWhile () {
         printNonTerminal("whileStatement");
@@ -141,7 +142,8 @@ public class Parser{
         expectPeek(RBRACE);
         printNonTerminal("/whileStatement");
     }
-    // Compiles an if statement, possibly with a trailing else clause.
+    // Compiles an if statement
+    // 'if' '(' expression ')' '{' statements '}' ( 'else' '{' statements '}' )?
     void parseIf () {
         printNonTerminal("ifStatement");
         expectPeek(IF);
@@ -159,7 +161,9 @@ public class Parser{
         }
         printNonTerminal("/ifStatement");
     }
-    // Compiles a return statement.
+
+    // Compiles a return statement
+    // 'return' expression? ';'
     void parseReturn () {
         printNonTerminal("returnStatement");
         expectPeek(RETURN);
@@ -169,7 +173,7 @@ public class Parser{
         expectPeek(SEMICOLON);
         printNonTerminal("/returnStatement");
     }
-    // 
+    // subroutineName '(' expressionList ')' | (className|varName) '.' subroutineName '(' expressionList ')'
     void parseSubroutineCall () {
         if (checkToken (LPAREN)) {
             expectPeek(LPAREN);
@@ -186,6 +190,7 @@ public class Parser{
     }
 
     // Compiles a do statement.
+    // 'do' subroutineCall ';'
     void parseDo () {
         printNonTerminal("doStatement");
         expectPeek(DO);
@@ -196,7 +201,8 @@ public class Parser{
         printNonTerminal("/doStatement");
     }
 
-    // Compiles an expression.
+    // Compiles an expression list.
+    // (expression ( ',' expression)* )?
     void parseExpressionList() {
         printNonTerminal("expressionList");
 
@@ -209,7 +215,8 @@ public class Parser{
         }
         printNonTerminal("/expressionList");
     }
-    // Compiles a sequence of statements, not including the enclosing ‘‘{}’’.
+    // Compiles a sequence of statements.
+    // statement*
     void parseStatements () {
         printNonTerminal("statements");
         while (checkToken(WHILE) ||
@@ -221,7 +228,7 @@ public class Parser{
         }
         printNonTerminal("/statements");
     }
-
+    // letStatement | ifStatement | whileStatement | doStatement | returnStatement
     void parseStatement() {
         switch (peekToken.getType()) {
             case LET:
@@ -261,7 +268,7 @@ public class Parser{
         printNonTerminal("/letStatement");
 
     }
-
+    // term (op term)*
     void parseExpression() {
         printNonTerminal("expression");
         parserTerm ();
@@ -280,7 +287,7 @@ public class Parser{
         }
         printNonTerminal("/expression");
     }
-
+    // identifier
     void parseIdentifier(){
         if (checkToken(LPAREN) || checkToken(DOT)) {
             parseSubroutineCall();
@@ -292,7 +299,7 @@ public class Parser{
             }
         }
     };
-
+    // integerConstant | stringConstant | keywordConstant | varName | varName '[' expression ']' | subroutineCall | '(' expression ')' | unaryOp term
     void parserTerm () {
         printNonTerminal("term");
         switch (peekToken.getType()) {
