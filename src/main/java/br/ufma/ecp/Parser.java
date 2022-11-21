@@ -6,7 +6,7 @@ import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenSubTypes;
 
 
-public class Parser {
+public class Parser{
     private Scanner scan;
     private Token currentToken;
     private Token peekToken;
@@ -21,7 +21,7 @@ public class Parser {
     private void nextToken () {
     currentToken = peekToken;
     peekToken = scan.nextToken();
-}
+    }
 
     void parse() {
         parseClass();
@@ -34,11 +34,11 @@ public class Parser {
         expectPeek(CLASS);
         expectPeek(IDENTIFIER);
         expectPeek(LBRACE);
-        while (peekToken.getType() == FIELD || peekToken.getType() == STATIC) {
+        while (checkToken(FIELD) || checkToken(STATIC)) {
             parseClassVarDec();
         }
 
-        while (peekTokenIs(FUNCTION) || peekTokenIs(CONSTRUCTOR) || peekTokenIs(METHOD)) {
+        while (checkToken(FUNCTION) || checkToken(CONSTRUCTOR) || checkToken(METHOD)) {
             parseSubRoutineDec();
         }
         
@@ -52,7 +52,7 @@ public class Parser {
         expectPeek(FIELD, STATIC);
         expectPeek(INT, CHAR, BOOLEAN, IDENTIFIER);
         expectPeek(IDENTIFIER);
-        while (peekToken.getType() == COMMA) {
+        while (checkToken(COMMA)) {
             expectPeek(COMMA);
             expectPeek(IDENTIFIER);
         }
@@ -60,13 +60,13 @@ public class Parser {
         printNonTerminal("/classVarDec");
     }
     
-    //Compiles a VAR declaration.
+    // Compiles a VAR declaration.
     void parseVardec () {
         printNonTerminal("varDec");
         expectPeek(VAR);
         expectPeek(INT,CHAR,BOOLEAN,IDENTIFIER);
         expectPeek(IDENTIFIER);
-        while (peekTokenIs(COMMA)) {
+        while (checkToken(COMMA)) {
             expectPeek(COMMA);
             expectPeek(IDENTIFIER);
         }
@@ -79,9 +79,19 @@ public class Parser {
     // ( 'constructor' | 'function' | 'method' ) ( 'void' | type) subroutineName '(' parameterList ')' subroutineBody
     void parseSubRoutineDec(){
         printNonTerminal("subroutineDec");
-        expectPeek(CONSTRUCTOR, FUNCTION, METHOD);
-        expectPeek(VOID, INT, CHAR, BOOLEAN, IDENTIFIER);
-        expectPeek(IDENTIFIER);
+        
+        if(checkToken(CONSTRUCTOR)){
+            expectPeek(CONSTRUCTOR);
+            expectPeek(IDENTIFIER);
+            expectPeek(IDENTIFIER);
+        }
+
+        if(checkToken(FUNCTION) || checkToken(METHOD)){
+            expectPeek(FUNCTION, METHOD);
+            expectPeek(VOID, INT, CHAR, BOOLEAN);
+            expectPeek(IDENTIFIER);
+        }
+
         expectPeek(LPAREN);
         parseParameterList();
         expectPeek(RPAREN);
@@ -89,11 +99,12 @@ public class Parser {
 
         printNonTerminal("/subroutineDec");
     }
+
     // '{' varDec* statements '}'
     void parseSubroutineBody () {
         printNonTerminal("subroutineBody");
         expectPeek(LBRACE);
-        while (peekTokenIs(VAR)) {
+        while (checkToken(VAR)) {
             parseVardec();
         }
         parseStatements();
@@ -104,11 +115,11 @@ public class Parser {
     // Compiles a (possibly empty) parameter list, not including the enclosing "()" .
     void parseParameterList(){
         printNonTerminal("parameterList");
-        if (!peekTokenIs(RPAREN)){
+        if (!checkToken(RPAREN)){
             expectPeek(INT,CHAR,BOOLEAN,IDENTIFIER);
             expectPeek(IDENTIFIER);
         }
-        while (peekTokenIs(COMMA)){
+        while (checkToken(COMMA)){
             expectPeek(COMMA);
             expectPeek(INT,CHAR,BOOLEAN,IDENTIFIER);
             expectPeek(IDENTIFIER);
@@ -140,7 +151,7 @@ public class Parser {
         expectPeek(LBRACE);
         parseStatements();
         expectPeek(RBRACE);
-        if (peekTokenIs(ELSE)){
+        if (checkToken(ELSE)){
             expectPeek(ELSE);
             expectPeek(LBRACE);
             parseStatements();
@@ -152,7 +163,7 @@ public class Parser {
     void parseReturn () {
         printNonTerminal("returnStatement");
         expectPeek(RETURN);
-        if (peekToken.getType() != SEMICOLON) {
+        if (!checkToken(SEMICOLON)) {
             parseExpression();
         }
         expectPeek(SEMICOLON);
@@ -160,7 +171,7 @@ public class Parser {
     }
     // 
     void parseSubroutineCall () {
-        if (peekTokenIs (LPAREN)) {
+        if (checkToken (LPAREN)) {
             expectPeek(LPAREN);
             parseExpressionList();
             expectPeek(RPAREN);
@@ -189,10 +200,10 @@ public class Parser {
     void parseExpressionList() {
         printNonTerminal("expressionList");
 
-        if (!peekTokenIs(RPAREN)){
+        if (!checkToken(RPAREN)){
             parseExpression();
         }
-        while (peekTokenIs(COMMA)){
+        while (checkToken(COMMA)){
             expectPeek(COMMA);
             parseExpression();
         }
@@ -201,11 +212,11 @@ public class Parser {
     // Compiles a sequence of statements, not including the enclosing ‘‘{}’’.
     void parseStatements () {
         printNonTerminal("statements");
-        while (peekToken.getType() == WHILE ||
-        peekToken.getType() == DO ||
-        peekToken.getType() == IF ||
-        peekToken.getType() == LET ||
-        peekToken.getType() == RETURN ) {
+        while (checkToken(WHILE) ||
+        checkToken(DO)  ||
+        checkToken(IF) ||
+        checkToken(LET) ||
+        checkToken(RETURN) ) {
             parseStatement();
         }
         printNonTerminal("/statements");
@@ -239,7 +250,7 @@ public class Parser {
         printNonTerminal("letStatement");
         expectPeek(LET);
         expectPeek(IDENTIFIER);
-        if (peekTokenIs (LBRACKET)) {
+        if (checkToken (LBRACKET)) {
             expectPeek(LBRACKET);
             parseExpression();
             expectPeek(RBRACKET);
@@ -254,16 +265,16 @@ public class Parser {
     void parseExpression() {
         printNonTerminal("expression");
         parserTerm ();
-        while (peekToken.getType() == PLUS ||
-        peekToken.getType() == MINUS ||
-        peekToken.getType() == ASTERISK ||
-        peekToken.getType() == SLASH ||
-        peekToken.getType() == OR ||
-        peekToken.getType() == NOT ||
-        peekToken.getType() == LT ||
-        peekToken.getType() == GT ||
-        peekToken.getType() == EQ ||
-        peekToken.getType() == AND) {
+        while (checkToken(PLUS) ||
+        checkToken(MINUS) ||
+        checkToken(ASTERISK) ||
+        checkToken(SLASH) ||
+        checkToken(OR) ||
+        checkToken(NOT) ||
+        checkToken(LT) ||
+        checkToken(GT) ||
+        checkToken(EQ) ||
+        checkToken(AND)) {
             expectPeek(peekToken.getType());
             parserTerm();
         }
@@ -271,10 +282,10 @@ public class Parser {
     }
 
     void parseIdentifier(){
-        if (peekTokenIs(LPAREN) || peekTokenIs(DOT)) {
+        if (checkToken(LPAREN) || checkToken(DOT)) {
             parseSubroutineCall();
         } else {
-            if (peekTokenIs(LBRACKET)){
+            if (checkToken(LBRACKET)){
                 expectPeek(LBRACKET);
                 parseExpression();
                 expectPeek(RBRACKET);
@@ -321,17 +332,12 @@ public class Parser {
         printNonTerminal("/term");
     }
 
-    boolean currentTokenIs (TokenSubTypes type) {
-        return currentToken.getType() == type;
-    }
-
-
-    boolean peekTokenIs (TokenSubTypes type) {
+    boolean checkToken (TokenSubTypes type) {
         return peekToken.getType() == type;
     }
 
 
-    private void expectPeek(TokenSubTypes type) {
+    public void expectPeek(TokenSubTypes type) {
         if (peekToken.getType() == type ) {
             nextToken();
             xmlOutput.append(String.format("%s\r\n", currentToken.toString()));
@@ -340,7 +346,7 @@ public class Parser {
         }
     }
 
-    private void expectPeek(TokenSubTypes... types) {
+    public void expectPeek(TokenSubTypes... types) {
         
         for (TokenSubTypes type : types) {
             if (peekToken.getType() == type) {
@@ -352,7 +358,7 @@ public class Parser {
 
     }
 
-    private void printNonTerminal(String nterminal) {
+    public void printNonTerminal(String nterminal) {
         xmlOutput.append(String.format("<%s>\r\n", nterminal));
     }
 
