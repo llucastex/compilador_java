@@ -87,6 +87,11 @@ public class Token {
         return "<symbol> " + lexeme + " </symbol>";
         }
         return "<"+ this.tokenType.toString().toLowerCase() +"> " + lexeme + " </"+ this.tokenType.toString().toLowerCase() + ">";
-    }  
+    } 
+
+    public String value () {
+      return this.lexeme;
+  }
+
 
 }

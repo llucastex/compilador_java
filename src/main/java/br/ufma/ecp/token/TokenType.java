@@ -5,5 +5,6 @@ public enum TokenType {
         IDENTIFIER,
         SYMBOL,
         INT_CONST,
-        STRING_CONST
+        STRING_CONST;
+        
 }

@@ -23,7 +23,7 @@ public class Scanner {
         keywords.put("int", TokenSubTypes.INT);
         keywords.put("var", TokenSubTypes.VAR);
         keywords.put("const", TokenSubTypes.CONST);
-        keywords.put("print", TokenSubTypes.PRINT);
+        // keywords.put("print", TokenSubTypes.PRINT);
         keywords.put("class", TokenSubTypes.CLASS);
         keywords.put("method", TokenSubTypes.METHOD);
         keywords.put("function", TokenSubTypes.FUNCTION);
