@@ -173,6 +173,7 @@ public class Parser{
         }
 
         if (subroutineType == METHOD) {
+            System.out.println("Entrei aqui");
             vmWriter.writePush(Segment.ARG, 0);
             vmWriter.writePop(Segment.POINTER, 0);
         }
@@ -286,6 +287,7 @@ public class Parser{
         if (!checkToken(SEMICOLON)) {
             parseExpression();
         }else{
+            System.out.println("Entrei aqui");
             vmWriter.writePush(Segment.CONST, 0);
         }
         expectPeek(SEMICOLON);
@@ -404,7 +406,7 @@ public class Parser{
         printNonTerminal("letStatement");
         expectPeek(LET);
         expectPeek(IDENTIFIER);
-        System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
+        // System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
         var symbol = symbolTable.resolve(currentToken.value());
         if (checkToken (LBRACKET)) {
             expectPeek(LBRACKET);
@@ -471,15 +473,16 @@ public class Parser{
 
     // identifier
     void parseIdentifier(){
-        System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
+        // System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
         Symbol sym = symbolTable.resolve(currentToken.value());
-        System.out.println(sym);
+        // System.out.println(sym);
         if (checkToken(LPAREN) || checkToken(DOT)) {
             parseSubroutineCall();
         } else {
             if (checkToken(LBRACKET)){
                 expectPeek(LBRACKET);
                 parseExpression();
+                System.out.println("Entrei aqui parseIdentifier");
                 vmWriter.writePush(kind2Segment(sym.kind()), sym.index());
                 vmWriter.writeArithmetic(Command.ADD);
 
@@ -487,7 +490,8 @@ public class Parser{
                 vmWriter.writePop(Segment.POINTER, 1); // pop address pointer into pointer 1
                 vmWriter.writePush(Segment.THAT, 0);
             } else{
-            System.out.println("-------"+sym.kind());
+            // System.out.println("Entrei aqui parseIdentifier else");
+            System.out.println(sym +" - " +currentToken.value());
                 vmWriter.writePush(kind2Segment(sym.kind()), sym.index());
             }
         }
@@ -498,7 +502,7 @@ public class Parser{
         switch (peekToken.getType()) {
             case NUMBER:
                 expectPeek(NUMBER);
-                System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
+                // System.out.println("O tipo e lexema eh: "+ currentToken.getType()+" e " + currentToken.getLexeme() + " e value: "+ currentToken.value());
                 vmWriter.writePush(Segment.CONST, Integer.parseInt(currentToken.value()));
                 break;
             case IDENTIFIER:
